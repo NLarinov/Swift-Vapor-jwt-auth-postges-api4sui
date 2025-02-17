@@ -20,6 +20,7 @@ public func configure(_ app: Application) async throws {
 
     app.migrations.add(CreateTodo())
     app.migrations.add(CreateUser())
+    app.migrations.add(AddAvatarToUsers())
     
     try await app.autoMigrate().get()
 

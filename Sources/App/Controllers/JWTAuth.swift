@@ -11,12 +11,20 @@ import JWT
 
 struct JWTMiddleware: AsyncMiddleware {
     func respond(to req: Request, chainingTo next: AsyncResponder) async throws -> Response {
-        let token = req.headers.bearerAuthorization?.token
-        guard let token = token else {
+        guard let token = req.headers.bearerAuthorization?.token else {
+            print("❌ Missing Bearer Token")
             throw Abort(.unauthorized, reason: "Missing or invalid token")
         }
 
-        req.auth.login(try req.jwt.verify(token, as: UserPayload.self))
+        do {
+            let payload = try req.jwt.verify(token, as: UserPayload.self)
+            print("✅ Token Verified: \(payload.userID)")
+            req.auth.login(payload)
+        } catch {
+            print("❌ Token verification failed: \(error)")
+            throw Abort(.unauthorized, reason: "Invalid token")
+        }
+
         return try await next.respond(to: req)
     }
 }

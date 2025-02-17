@@ -25,6 +25,8 @@ final class User: Model, Sendable, Content {
     var secretResponse: String
     @Field(key: "token")
     var token: String
+    @Field(key: "avatar")
+    var avatar: String?
     
     
 
